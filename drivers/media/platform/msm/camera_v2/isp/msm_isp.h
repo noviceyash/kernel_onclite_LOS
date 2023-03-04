@@ -415,11 +415,15 @@ enum msm_isp_comp_irq_types {
 
 #define MSM_VFE_REQUESTQ_SIZE 8
 
+#ifdef CONFIG_PATCH_GCAM_FREEZE
+
+#else
 struct msm_isp_pending_buf_info {
 	uint32_t is_buf_done_pending;
 	struct msm_isp_buffer *buf;
 	uint32_t frame_id;
 };
+#endif
 
 struct msm_vfe_axi_stream {
 	uint32_t frame_id;
@@ -477,7 +481,12 @@ struct msm_vfe_axi_stream {
 	uint32_t vfe_mask;
 	uint32_t composite_irq[MSM_ISP_COMP_IRQ_MAX];
 	int lpm_mode;
+
+#ifdef CONFIG_PATCH_GCAM_FREEZE
+
+#else
 	struct msm_isp_pending_buf_info pending_buf_info;
+#endif
 };
 
 struct msm_vfe_axi_composite_info {
@@ -768,6 +777,11 @@ struct msm_vfe_common_subdev {
 	struct msm_vfe_common_dev_data *common_data;
 };
 
+struct isp_proc {
+	uint32_t  kernel_sofid;
+	uint32_t  vfeid;
+};
+
 struct vfe_device {
 	/* Driver private data */
 	struct platform_device *pdev;
@@ -852,10 +866,14 @@ struct vfe_device {
 	uint32_t recovery_irq1_mask;
 	/* total bandwidth per vfe */
 	uint64_t total_bandwidth;
-	struct isp_kstate *isp_page;
+	struct isp_proc *isp_page;
 
+#ifdef CONFIG_PATCH_GCAM_FREEZE
+
+#else
 	/* irq info */
 	uint32_t irq_sof_id;
+#endif
 };
 
 struct vfe_parent_device {

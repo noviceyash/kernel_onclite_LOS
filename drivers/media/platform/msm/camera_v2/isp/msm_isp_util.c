@@ -1498,6 +1498,7 @@ int msm_isp_proc_cmd(struct vfe_device *vfe_dev, void *arg)
 	reg_cfg_cmd = kzalloc(sizeof(struct msm_vfe_reg_cfg_cmd)*
 		proc_cmd->num_cfg, GFP_KERNEL);
 	if (!reg_cfg_cmd) {
+		pr_err("%s: reg_cfg alloc failed\n", __func__);
 		rc = -ENOMEM;
 		goto reg_cfg_failed;
 	}
@@ -2333,7 +2334,12 @@ int msm_isp_open_node(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
 	vfe_dev->isp_raw0_debug = 0;
 	vfe_dev->isp_raw1_debug = 0;
 	vfe_dev->isp_raw2_debug = 0;
+
+#ifdef CONFIG_PATCH_GCAM_FREEZE
+
+#else
 	vfe_dev->irq_sof_id = 0;
+#endif
 	if (vfe_dev->hw_info->vfe_ops.core_ops.init_hw(vfe_dev) < 0) {
 		pr_err("%s: init hardware failed\n", __func__);
 		vfe_dev->vfe_open_cnt--;
